@@ -176,6 +176,7 @@ function showAddModal(config) {
   const submitButton = document.createElement("button");
   submitButton.type = "submit";
   submitButton.textContent = "Додати";
+
   form.appendChild(submitButton);
 
   modalContent.appendChild(form);
@@ -206,6 +207,11 @@ function showAddModal(config) {
     if (isValid) {
       createNewItem(config.apiUrl, newItem, config)
         .then(() => {
+          alert("Зміни додано");
+          setTimeout(() => {
+            form.style.display = "none";
+
+          }, 1000); // Close modal after 1 second
           document.body.removeChild(modal);
           DataTable(config);
         })
@@ -214,20 +220,26 @@ function showAddModal(config) {
   };
 }
 
-async function createNewItem(apiUrl, item) {
+async function createNewItem(apiUrl, item, config) {
   try {
+    // Convert price to number if it exists
+    const processedItem = { ...item };
+    if (processedItem.price) {
+      processedItem.price = parseFloat(processedItem.price) || 0;
+    }
+
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+
       },
-      body: JSON.stringify(item),
+      body: JSON.stringify(processedItem),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Response error:", errorText);
-      throw new Error("Failed to create item");
+      throw new Error(`Failed to create item: ${errorText}`);
     }
 
     return await response.json();
@@ -236,6 +248,32 @@ async function createNewItem(apiUrl, item) {
     throw error;
   }
 }
+
+
+/* async function testCreateItem() {
+  const testItem = {
+    title: 'Test Product8',
+    price: 28088888888888,
+    currency: '$',
+    color: '#ff3780'
+  };
+  try {
+    const response = await fetch("https://mock-api.shpp.me/Tetiana5Buria/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(testItem)
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to create item: ${errorText}`);
+    }
+    const result = await response.json();
+    console.log("Test result:", result);
+  } catch (error) {
+    console.error("Test error:", error.message);
+  }
+}
+testCreateItem(); */
 
 function getAge(birthday) {
   const birthDate = new Date(birthday);
@@ -308,31 +346,28 @@ const config2 = {
   parent: "#productsTable",
   columns: [
     {
-      title: "Назва",
-      value: "title",
-      input: { type: "text", name: "title", required: true },
+        title: "Назва",
+        value: "title",
+        input: { type: "text" }
     },
     {
-      title: "Ціна",
-      value: (product) => `${product.price} ${product.currency}`,
-      input: [
-        { type: "number", name: "price", label: "Ціна", required: true ,
-
-          type: "select",
-          name: "currency",
-          label: "Валюта",
-          options: ["$", "€", "₴"],
-          required: false,
-        },
-      ],
+        title: "Ціна",
+        value: (product) => `${product.price} ${product.currency}`,
+        input: [
+            { type: "number", name: "price", label: "Ціна" },
+            { type: "select", name: "currency", label: "Валюта", options: ["$", "€", "₴"], required: false }
+        ]
     },
     {
-      title: "Колір",
-      value: (product) => getColorLabel(product.color),
-      input: { type: "color", name: "color", required: true },
+        title: "Колір",
+        value: (product) => getColorLabel(product.color),
+        input: { type: "color", name: "color" }
     },
   ],
-  apiUrl: "https://mock-api.shpp.me/Tetiana5Buria/products",
+  apiUrl: "https://mock-api.shpp.me/Tetiana5Buria/products"
 };
 
 DataTable(config2);
+
+
+
