@@ -113,9 +113,8 @@ img{
   padding: 8px;
   box-sizing: border-box;
 }
-.input-group input.error,
-.input-group select.error {
-  border: 2px solid  #6f0707;
+input.error, select.error {
+  border: 5px solid red;
 }
 form button {
   padding: 8px 16px;
@@ -131,6 +130,7 @@ img {
   max-width: 50px;
   height: auto;
 }
+
 
 
 
