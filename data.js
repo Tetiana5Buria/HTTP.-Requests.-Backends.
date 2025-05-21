@@ -141,7 +141,13 @@ function createModalContent(modal) {
 
 function createForm(config) {
   const form = document.createElement("form");
+  form.style.position = "relative"; // Додаємо відносне позиціонування для форми
 
+  // Додаємо кнопку закриття зверху
+  const closeButton = createCloseButton();
+  form.append(closeButton);
+
+  // Додаємо поля форми
   for (let i = 0; i < config.columns.length; i++) {
     const inputGroups = createInputGroups(config.columns[i]);
     for (let j = 0; j < inputGroups.length; j++) {
@@ -149,14 +155,14 @@ function createForm(config) {
     }
   }
 
+  // Додаємо контейнер із кнопкою відправки (без кнопки закриття)
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("form-buttons");
-  buttonContainer.append(createSubmitButton(), createCloseButton());
+  buttonContainer.append(createSubmitButton());
   form.append(buttonContainer);
 
   return form;
 }
-
 function createInputGroups(column) {
   const inputs = Array.isArray(column.input) ? column.input : [column.input];
   const inputGroups = [];
@@ -244,6 +250,7 @@ function addEnterKeyListener(input, form) {
 
 function createSubmitButton() {
   const button = document.createElement("button");
+  button.classList.add("add_button")
   button.type = "submit";
   button.textContent = "Додати";
   return button;
@@ -251,6 +258,7 @@ function createSubmitButton() {
 
 function createCloseButton() {
   const button = document.createElement("button");
+  button.classList.add("close_button")
   button.type = "button";
   button.textContent = "X";
   return button;

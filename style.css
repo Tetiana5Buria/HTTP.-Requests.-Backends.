@@ -82,19 +82,22 @@ img{
 }
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(38, 25, 102, 0.5);
+  background-color: rgba(92, 88, 107, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: auto;
+  border: 4px solid;
 
 }
 .modal-content {
   background-color: rgb(217, 205, 205);
+  border:rgb(128, 133, 128) 5px solid;
   padding: 20px;
   border-radius: 5px solid;
   width: 600px;
@@ -114,24 +117,38 @@ img{
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+
 }
 /* input.error, select.error {
   border: 2px solid red;
 } */
-form button {
+.add_button {
   padding: 8px 16px;
   background-color: var(--hover-background-color);
   color: white;
   border: 2px;
   cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
 }
-form button:hover {
+.add_button:hover {
   background-color: var(--button-color);
 }
+.close_button {
+  margin: 0;
+  position: absolute;
+  right: 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.close_button:hover {
+  background-color: var(--button-color);
+}
+
 
 
 
