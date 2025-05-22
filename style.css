@@ -109,19 +109,19 @@ img{
 .input-group {
   margin-top: 20px;
   margin-bottom: 15px;
-  border:#dbd976 2px solid;
+
 }
 .input-group label {
   display: block;
   margin-bottom: 5px;
-  border:green 2px solid;
+
 }
 .input-group input,
 .input-group select {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
-border-color: aqua;
+
 
 }
 .input-error {
@@ -129,6 +129,7 @@ border-color: aqua;
   border-width: 2px;
   border-style: solid;
   background-color: #ffe6e6;
+
 }
 .add_button {
   padding: 8px 16px;
