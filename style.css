@@ -80,7 +80,7 @@ img{
 .add-button:hover {
   background-color: #6f7173;
 }
-.modal {
+.modalWindow {
   position: fixed;
   background-color: rgba(92, 88, 107, 0.5);
   display: flex;
@@ -96,6 +96,7 @@ img{
 
 }
 .modal-content {
+  margin: 0;
   background-color: rgb(217, 205, 205);
   border:rgb(128, 133, 128) 5px solid;
   padding: 20px;
@@ -106,22 +107,29 @@ img{
 
 
 .input-group {
+  margin-top: 20px;
   margin-bottom: 15px;
+  border:#dbd976 2px solid;
 }
-/* .input-group label {
+.input-group label {
   display: block;
   margin-bottom: 5px;
-} */
+  border:green 2px solid;
+}
 .input-group input,
 .input-group select {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
+border-color: aqua;
 
 }
-/* input.error, select.error {
-  border: 2px solid red;
-} */
+.input-error {
+  border-color: red !important;
+  border-width: 2px;
+  border-style: solid;
+  background-color: #ffe6e6;
+}
 .add_button {
   padding: 8px 16px;
   background-color: var(--hover-background-color);
@@ -133,9 +141,7 @@ img{
   background-color: var(--button-color);
 }
 .close_button {
-  margin: 0;
-  position: absolute;
-  right: 10px;
+  left: auto;
   background-color: red;
   color: white;
   border: none;
@@ -143,6 +149,9 @@ img{
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 20%;
 }
 
 .close_button:hover {

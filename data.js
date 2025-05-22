@@ -128,7 +128,7 @@ function showAddModal(config) {
 
 function createModal() {
   const modal = document.createElement("div");
-  modal.classList.add("modal");
+  modal.classList.add("modalWindow");
   return modal;
 }
 
@@ -141,7 +141,7 @@ function createModalContent(modal) {
 
 function createForm(config) {
   const form = document.createElement("form");
-  form.style.position = "relative"; // Додаємо відносне позиціонування для форми
+ /*  form.style.position = "relative"; // Додаємо відносне позиціонування для форми */
 
   // Додаємо кнопку закриття зверху
   const closeButton = createCloseButton();
@@ -172,30 +172,20 @@ function createInputGroups(column) {
     inputGroup.classList.add("input-group");
 
     const label = document.createElement("label");
-    if (inputConfig.label) {
-      label.textContent = inputConfig.label;
-    } else {
-      label.textContent = column.title;
-    }
+    label.textContent = inputConfig.label || column.title;
 
     const input = createInputElement(inputConfig, column);
+
+    input.addEventListener("input", () => {
+      validateForm(input.form); // Валідуємо всю форму на кожне введення
+    });
+
     inputGroup.append(label, input);
-
-    if (inputConfig.required) {
-      input.addEventListener("input", () => {
-        if (!input.value) {
-          input.classList.add("error");
-        } else {
-          input.classList.remove("error");
-        }
-      });
-    }
-
-    addEnterKeyListener(input, inputGroup.parentNode);
     inputGroups.push(inputGroup);
   }
   return inputGroups;
 }
+
 
 
 function createInputElement(inputConfig, column) {
@@ -282,52 +272,76 @@ function handleModalClose(modal, form) {
     }
   }, { once: true });
 }
+
 function handleFormSubmit(form, modal, config) {
-  form.onsubmit = async event => {
+  const submitButton = form.querySelector("button[type='submit']");
+  const inputs = form.querySelectorAll("input, select");
+
+  // Функція для оновлення стану кнопки та стилів полів
+  function updateFormState() {
+    const { isValid } = validateForm(form);
+    submitButton.disabled = !isValid; // Блокуємо або розблокуємо кнопку
+    inputs.forEach((input) => {
+      if (input.required && !input.value.trim()) {
+        input.classList.add("input-error");
+      } else {
+        input.classList.remove("input-error");
+      }
+    });
+  }
+
+
+  updateFormState();
+
+  // Валідація при надсиланні форми
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
     const { newItem, isValid } = validateForm(form);
 
-    if (isValid===false) {
+    if (!isValid) {
       alert("Будь ласка, заповніть усі обов'язкові поля.");
-      return; // Зупиняємо виконання, якщо не пройшла валідація
+      updateFormState(); // Оновлюємо стилі полів
+      return;
     }
 
     try {
       await createNewElement(config.apiUrl, newItem);
       alert("Додано успішно!");
       document.body.removeChild(modal);
-      DataTable(config); // Оновлюємо таблицю
+      DataTable(config);
     } catch (error) {
       console.error("Error creating item:", error.message);
       alert("Помилка при додаванні елемента: " + error.message);
     }
-  };
-}
+  });
 
+
+  inputs.forEach((input) => {
+    input.addEventListener("input", updateFormState);
+  });
+}
 
 function validateForm(form) {
   let allFilled = true;
   const newItem = {};
 
-  form.querySelectorAll("input, select").forEach(input => {
+  form.querySelectorAll("input, select").forEach((input) => {
     const value = input.value.trim();
-    const isEmpty = value === "";
-    const isRequired = input.hasAttribute("required") || input.required;
+    const isRequired = input.hasAttribute("required");
 
-    if ((isRequired && isEmpty) || (input.tagName === "SELECT" && isEmpty)) {
+    if (isRequired && !value) {
       allFilled = false;
-      input.style.borderColor = "red"; // Підсвічуємо червоним
-      input.style.borderWidth = "2px"; // Додаємо товщину для видимості
-      input.style.borderStyle = "solid";
+      input.classList.add("input-error");
+
     } else {
-      input.style.borderColor = ""; // Скидаємо бордер
-      newItem[input.name] = value; // Збираємо дані з форми
+      input.classList.remove("input-error");
+      newItem[input.name] = value;
     }
   });
 
   return { newItem, isValid: allFilled };
 }
-
 
 
 
@@ -479,3 +493,322 @@ const config2 = {
 };
 
 DataTable(config2);
+
+
+// Main DataTable function
+/* function DataTable(config) {
+  const parentElement = document.querySelector(config.parent);
+  parentElement.innerHTML = ''; // Clear parent
+
+  const table = document.createElement('table');
+  table.classList.add('data-table');
+
+  const thead = createHeader(config);
+  const tbody = document.createElement('tbody');
+  table.append(thead, tbody);
+  parentElement.append(table);
+  addButtonAboveTable(config, table);
+
+  fetchData(config.apiUrl)
+    .then(data => fillTableBody(tbody, config, data))
+    .catch(error => console.error('Error:', error.message));
+}
+
+// Simplified fetchData assuming array response
+async function fetchData(apiUrl) {
+  const response = await fetch(apiUrl);
+  if (!response.ok) throw new Error('Failed to load data');
+  const { data } = await response.json();
+  if (!Array.isArray(data)) throw new Error('Expected array data');
+  return data.map((item, i) => ({ id: item.id || String(i + 1), ...item }));
+}
+
+// Create table header
+function createHeader(config) {
+  const thead = document.createElement('thead');
+  const row = document.createElement('tr');
+  row.append(createCell('th', '№')); // Simplified cell creation
+  config.columns.forEach(col => row.append(createCell('th', col.title)));
+  row.append(createCell('th', 'Дії'));
+  thead.append(row);
+  return thead;
+}
+
+// Simplified cell creation
+function createCell(tag, content, isHTML = false) {
+  const cell = document.createElement(tag);
+  isHTML ? (cell.innerHTML = content) : (cell.textContent = content);
+  return cell;
+}
+
+// Fill table body
+function fillTableBody(tbody, config, data) {
+  tbody.innerHTML = '';
+  data.forEach((item, i) => {
+    const row = document.createElement('tr');
+    row.append(createCell('td', i + 1));
+
+    config.columns.forEach(col => {
+      const value = typeof col.value === 'function' ? col.value(item) : item[col.value] || '';
+      row.append(createCell('td', value, typeof col.value === 'function'));
+    });
+
+    const actionCell = document.createElement('td');
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Видалити';
+    deleteButton.classList.add('data-id');
+    deleteButton.onclick = () => item.id ? deleteItem(item.id, config) : console.error('No ID for item:', item);
+    actionCell.append(deleteButton);
+    row.append(actionCell);
+    tbody.append(row);
+  });
+}
+
+// Add button above table
+function addButtonAboveTable(config, table) {
+  const parentElement = document.querySelector(config.parent);
+  const addButton = document.createElement('button');
+  addButton.textContent = 'Додати';
+  addButton.classList.add('add-button');
+  addButton.onclick = () => showAddModal(config);
+  parentElement.insertBefore(addButton, table);
+}
+
+// Create and show modal
+function showAddModal(config) {
+  const modal = document.createElement('div');
+  modal.classList.add('modalWindow');
+
+  const modalContent = document.createElement('div');
+  modalContent.classList.add('modal-content');
+
+  const form = createForm(config);
+  modalContent.append(form);
+  modal.append(modalContent);
+  document.body.append(modal);
+
+  handleModalClose(modal, form);
+  handleFormSubmit(form, modal, config);
+}
+
+// Create form
+function createForm(config) {
+  const form = document.createElement('form');
+  form.append(createCloseButton());
+
+  config.columns.forEach(col => {
+    const inputs = Array.isArray(col.input) ? col.input : [col.input];
+    inputs.forEach(inputConfig => {
+      const inputGroup = document.createElement('div');
+      inputGroup.classList.add('input-group');
+
+      const label = document.createElement('label');
+      label.textContent = inputConfig.label || col.title;
+
+      const input = createInputElement(inputConfig, col);
+      inputGroup.append(label, input);
+      form.append(inputGroup);
+    });
+  });
+
+  const buttonContainer = document.createElement('div');
+  buttonContainer.classList.add('form-buttons');
+  buttonContainer.append(createSubmitButton());
+  form.append(buttonContainer);
+
+  return form;
+}
+
+// Create input element
+function createInputElement(inputConfig, column) {
+  let input;
+  if (inputConfig.type === 'select' && inputConfig.options) {
+    input = document.createElement('select');
+    inputConfig.options.forEach(opt => {
+      const option = document.createElement('option');
+      option.value = opt;
+      option.textContent = opt;
+      input.append(option);
+    });
+  } else {
+    input = document.createElement('input');
+    input.type = inputConfig.type || 'text';
+  }
+
+  input.name = inputConfig.name || column.value;
+  input.required = inputConfig.required !== false;
+
+  Object.entries(inputConfig).forEach(([key, value]) => {
+    if (key !== 'options' && key !== 'label') input[key] = value;
+  });
+
+  return input;
+}
+
+// Create submit button
+function createSubmitButton() {
+  const button = document.createElement('button');
+  button.classList.add('add_button');
+  button.type = 'submit';
+  button.textContent = 'Додати';
+  return button;
+}
+
+// Create close button
+function createCloseButton() {
+  const button = document.createElement('button');
+  button.classList.add('close_button');
+  button.type = 'button';
+  button.textContent = 'X';
+  return button;
+}
+
+// Handle modal close
+function handleModalClose(modal, form) {
+  const closeModal = () => document.body.removeChild(modal);
+  modal.addEventListener('click', event => {
+    if (event.target === modal) closeModal();
+  });
+  form.querySelector('.close_button').addEventListener('click', closeModal);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeModal();
+  }, { once: true });
+}
+
+// Handle form submission
+function handleFormSubmit(form, modal, config) {
+  const submitButton = form.querySelector('button[type="submit"]');
+  const inputs = form.querySelectorAll('input, select');
+
+  const updateFormState = () => {
+    const { isValid } = validateForm(form);
+    submitButton.disabled = !isValid;
+    inputs.forEach(input => {
+      input.classList.toggle('input-error', input.required && !input.value.trim());
+    });
+  };
+
+  updateFormState();
+  inputs.forEach(input => input.addEventListener('input', updateFormState));
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const { newItem, isValid } = validateForm(form);
+
+    if (!isValid) {
+      alert('Будь ласка, заповніть усі обов’язкові поля.');
+      updateFormState();
+      return;
+    }
+
+    try {
+      await createNewElement(config.apiUrl, newItem);
+      alert('Додано успішно!');
+      document.body.removeChild(modal);
+      DataTable(config);
+    } catch (error) {
+      alert('Помилка при додаванні елемента: ' + error.message);
+    }
+  });
+}
+
+// Validate form
+function validateForm(form) {
+  const newItem = {};
+  let isValid = true;
+
+  form.querySelectorAll('input, select').forEach(input => {
+    const value = input.value.trim();
+    if (input.required && !value) {
+      isValid = false;
+    } else {
+      newItem[input.name] = value;
+    }
+  });
+
+  return { newItem, isValid };
+}
+
+// Create new element via API
+async function createNewElement(apiUrl, item) {
+  const processedItem = { ...item };
+  if (processedItem.price) processedItem.price = parseFloat(processedItem.price) || 0;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(processedItem),
+  });
+
+  if (!response.ok) throw new Error(`Failed to create item: ${await response.text()}`);
+  return response.json();
+}
+
+// Delete item
+function deleteItem(id, config) {
+  fetch(`${config.apiUrl}/${id}`, { method: 'DELETE' })
+    .then(response => {
+      if (!response.ok) throw new Error('Помилка при видаленні');
+      return response.json();
+    })
+    .then(() => DataTable(config))
+    .catch(error => console.error('Delete error:', error.message));
+}
+
+// Utility functions
+function getAge(birthday) {
+  const birthDate = new Date(birthday);
+  const currentDate = new Date();
+  let years = currentDate.getFullYear() - birthDate.getFullYear();
+  let months = currentDate.getMonth() - birthDate.getMonth();
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  const yearNote = years % 10 === 1 && years % 100 !== 11 ? 'year' : 'years';
+  const monthNote = months % 10 === 1 && months % 100 !== 11 ? 'month' : 'months';
+  return `${years} ${yearNote} ${months} ${monthNote}`;
+}
+
+function getColorLabel(color) {
+  return `<span style="color: ${color}">${color}</span>`;
+}
+
+// Configs remain unchanged
+const config1 = {
+  parent: '#usersTable',
+  columns: [
+    { title: 'Ім’я', value: 'name', input: { type: 'text', name: 'name', required: true } },
+    { title: 'Прізвище', value: 'surname', input: { type: 'text', name: 'surname', required: true } },
+    { title: 'Вік', value: user => getAge(user.birthday), input: { type: 'date', name: 'birthday', label: 'День народження', required: true } },
+    {
+      title: 'Фото',
+      value: user => `<img src="${'https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg'}" alt="${user.name} ${user.surname}" />`,
+      input: { type: 'url', name: 'avatar', required: false },
+    },
+  ],
+  apiUrl: 'https://mock-api.shpp.me/Tetiana5Buria/users',
+};
+
+const config2 = {
+  parent: '#productsTable',
+  columns: [
+    { title: 'Назва', value: 'title', input: { type: 'text' } },
+    {
+      title: 'Ціна',
+      value: product => `${product.price} ${product.currency}`,
+      input: [
+        { type: 'number', name: 'price', label: 'Ціна' },
+        { type: 'select', name: 'currency', label: 'Валюта', options: ['$', '€', '₴'], required: false },
+      ],
+    },
+    { title: 'Колір', value: product => getColorLabel(product.color), input: { type: 'color', name: 'color' } },
+  ],
+  apiUrl: 'https://mock-api.shpp.me/Tetiana5Buria/products',
+};
+
+DataTable(config1);
+DataTable(config2);
+ */
