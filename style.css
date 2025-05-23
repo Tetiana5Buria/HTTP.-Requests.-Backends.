@@ -46,7 +46,7 @@ img{
 }
 .data-id {
   color: white;
-  background-color: #e63946;
+  background: linear-gradient(45deg, #e63946, #9e1c1c);
   border: none;
   padding: 10px 15px;
   border-radius: 8px;
@@ -55,13 +55,14 @@ img{
   text-decoration: underline;
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-weight: bold;
- transition-delay: 0.1s;
-
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .data-id:hover {
-  background-color: #6f0707;
-  transform: translateY(-5px);
+  background: linear-gradient(45deg, #6f0707, #4b0101);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 .add-button {
   padding: 20px 30px;
@@ -131,19 +132,30 @@ img{
   background-color: #ffe6e6;
 
 }
+
 .add_button {
-  padding: 8px 16px;
-  background-color: var(--hover-background-color);
-  color: white;
-  border: 2px;
+  padding: 8px 8px;
+  background: linear-gradient(45deg, var(--header-background-color), #b8a8a8);
+  color: var(--border-color);
+  font-size: 32px;
   cursor: pointer;
+  display: flex;
+  justify-self: center;
+  align-self: center;
+  margin-top: 20px;
+  margin-right: 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
 }
+
 .add_button:hover {
-  background-color: var(--button-color);
+  background: linear-gradient( var(--button-color), orange);
+  transform: scale(1.1);
 }
 .close_button {
-  left: auto;
-  background-color: red;
+  background: linear-gradient(red, #c00);
   color: white;
   border: none;
   cursor: pointer;
@@ -152,11 +164,13 @@ img{
   align-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 20%;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .close_button:hover {
-  background-color: var(--button-color);
+  background: linear-gradient( var(--button-color), orange);
+  transform: scale(1.1);
 }
 
 

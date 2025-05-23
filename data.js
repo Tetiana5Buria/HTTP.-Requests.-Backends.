@@ -291,15 +291,19 @@ function handleFormSubmit(form, modal, config) {
   };
 
   updateFormState();
-  inputs.forEach((input) => input.addEventListener("input", updateFormState));
+  inputs.forEach((input) => {
+    input.addEventListener("input", updateFormState);
+    addEnterKeyListener(input, form); // Додаємо обробник Enter для кожного поля
 
-  form.addEventListener("submit", async (e) => {
+  });
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    updateFormState(); // Додано для оновлення стану перед перевіркою
+    updateFormState();
     const { newItem, isValid } = validateForm(form);
 
     if (!isValid) {
-      alert("Будь ласка, заповніть усі обов’язкові поля.");
+      alert("Дані не валідні");
       return;
     }
 
