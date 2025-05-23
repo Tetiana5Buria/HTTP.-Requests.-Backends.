@@ -1,0 +1,199 @@
+:root {
+    --background-color: beige;
+    --border-color: #472222;
+    --header-background-color: #d1bebe;
+    --row-background-color: #e8d8d8;
+    --hover-background-color: #afa4a4;
+    --button-color:  #dbd976;
+  }
+
+  body {
+    background-color: var(--background-color);
+    margin: 0;
+    font-family: 'Times New Roman', serif;
+  }
+
+  .data-table {
+    width: 100%;
+    height: auto;
+    margin-top: 50px;
+    font-size: medium;
+    text-align: center;
+  }
+
+  .data-table th,
+  .data-table td {
+    border: 2px solid var(--border-color);
+    padding: 15px;
+  }
+
+  .data-table th {
+    background-color: var(--header-background-color);
+    font-weight: bold;
+    font-style: italic;
+  }
+
+  .data-table tr:hover {
+    background-color: var(--hover-background-color);
+  }
+
+
+  img{
+    width: 50px;
+    height: 50px;
+     border-radius: 5px;
+     object-fit: cover;
+  }
+  .data-id {
+    color: white;
+    background: linear-gradient(45deg, #e63946, #9e1c1c);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: underline;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  .data-id:hover {
+    background: linear-gradient(45deg, #6f0707, #4b0101);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  }
+  .add-button {
+    padding: 20px 30px;
+    background-color: var(--header-background-color);
+    color: var(--border-color);
+    font-size: 32px;
+    cursor: pointer;
+    display: flex;
+    justify-self: end;
+    align-self: center;
+    margin-top: 20px;
+    margin-right: 20px;
+    border:2px solid var(--border-color);
+    border-radius: 5px;
+  }
+  .add-button:hover {
+    background-color: #6f7173;
+  }
+  .modalWindow {
+    position: fixed;
+    background-color: rgba(92, 88, 107, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: auto;
+    border: 4px solid;
+
+  }
+  .modal-content {
+    margin: 0;
+    background-color: rgb(217, 205, 205);
+    border:rgb(128, 133, 128) 5px solid;
+    padding: 20px;
+    border-radius: 5px solid;
+    width: 600px;
+    max-width: 90%;
+  }
+
+
+  .input-group {
+    margin-top: 20px;
+    margin-bottom: 15px;
+
+  }
+  .input-group label {
+    display: block;
+    margin-bottom: 5px;
+
+  }
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+
+
+  }
+  .input-error {
+    border-color: red !important;
+    border-width: 2px;
+    border-style: solid;
+    background-color: #ffe6e6;
+
+  }
+
+  .add_button {
+    padding: 8px 8px;
+    background: linear-gradient(45deg, var(--header-background-color), #b8a8a8);
+    color: var(--border-color);
+    font-size: 32px;
+    cursor: pointer;
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    margin-top: 20px;
+    margin-right: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+  }
+
+  .add_button:hover {
+    background: linear-gradient( var(--button-color), orange);
+    transform: scale(1.1);
+  }
+  .close_button {
+    background: linear-gradient(red, #c00);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .close_button:hover {
+    background: linear-gradient( var(--button-color), orange);
+    transform: scale(1.1);
+  }
+  .edit-button {
+    color: white;
+    background: linear-gradient(45deg, #d9d32b, #d8bd0c);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: underline;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  .edit-button:hover {
+    background: linear-gradient(45deg, #de7b0b, #edb80a);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  }
+
+
+
+
+
