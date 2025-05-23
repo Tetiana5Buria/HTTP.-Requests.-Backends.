@@ -172,6 +172,27 @@ img{
   background: linear-gradient( var(--button-color), orange);
   transform: scale(1.1);
 }
+.edit-button{
+  color: white;
+  background: linear-gradient(45deg, hsl(62, 78%, 56%), #9e751c);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: underline;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.edit-button:hover {
+  background: linear-gradient(45deg, #d1930d, #8f8105);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+
 
 
 
