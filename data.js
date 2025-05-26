@@ -89,7 +89,7 @@ function fillTableBody(tbody, config, data) {
     const actionCell = document.createElement("td");
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Видалити";
-    deleteButton.classList.add("data-id");
+    deleteButton.classList.add("remove__button");
     deleteButton.onclick = () => {
       if (data[i].id) {
         deleteItem(data[i].id, config);
@@ -102,6 +102,17 @@ function fillTableBody(tbody, config, data) {
     row.append(actionCell);
     tbody.append(row);
   }
+}
+function deleteItem(id, config) {
+  fetch(`${config.apiUrl}/${id}`, { method: "DELETE" })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Error during deletion");
+      }
+      return response.json();
+    })
+    .then(() => DataTable(config))
+    .catch((error) => console.error("Delete error:", error.message));
 }
 
 function addButtonAboveTable(config, table) {
@@ -143,8 +154,7 @@ function createForm(config) {
   const form = document.createElement("form");
   /*  form.style.position = "relative"; // Додаємо відносне позиціонування для форми */
 
-  // Додаємо кнопку закриття зверху
-  const closeButton = createCloseButton();
+  const closeButton = createCloseButton(); //close button
   form.append(closeButton);
 
   for (let i = 0; i < config.columns.length; i++) {
@@ -293,7 +303,7 @@ function handleFormSubmit(form, modal, config) {
   updateFormState();
   inputs.forEach((input) => {
     input.addEventListener("input", updateFormState);
-    addEnterKeyListener(input, form); // Додаємо обробник Enter для кожного поля
+    addEnterKeyListener(input, form); // Enter click
 
   });
 
@@ -387,22 +397,13 @@ function getAge(birthday) {
 
 function getColorLabel(color) {
   const span = document.createElement("span");
-  span.style.color = color;
-  span.textContent = color;
+  span.className = "color-label";
+  span.style.backgroundColor = color;
+  span.title = color;
   return span.outerHTML;
 }
 
-function deleteItem(id, config) {
-  fetch(`${config.apiUrl}/${id}`, { method: "DELETE" })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Помилка при видаленні");
-      }
-      return response.json();
-    })
-    .then(() => DataTable(config))
-    .catch((error) => console.error("Delete error:", error.message));
-}
+
 
 const config1 = {
   parent: "#usersTable",
@@ -431,8 +432,8 @@ const config1 = {
       title: "Фото",
       value: (user) =>
         `<img src="${
-          /* user.avatar || */
-          "https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg"
+           user.avatar /*||  "https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg" */
+
         }" alt="${user.name} ${user.surname}" />`,
       input: { type: "url", name: "avatar", required: false },
     },
